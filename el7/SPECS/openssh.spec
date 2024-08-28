@@ -305,6 +305,7 @@ mkdir -p -m755 $RPM_BUILD_ROOT%{_var}/empty/sshd
 make install DESTDIR=$RPM_BUILD_ROOT
 # Modify sshd config file.
 sed -E -i 's/^#?( ?)*GSSAPIAuthentication.*$/GSSAPIAuthentication yes/' $RPM_BUILD_ROOT/etc/ssh/sshd_config
+install -m755 contrib/ssh-copy-id $RPM_BUILD_ROOT/usr/bin/ssh-copy-id
 sed -E -i 's/^#?( ?)*GSSAPICleanupCredentials.*$/GSSAPICleanupCredentials no/' $RPM_BUILD_ROOT/etc/ssh/sshd_config
 cat << EOF >> $RPM_BUILD_ROOT/etc/ssh/sshd_config
 PubkeyAcceptedAlgorithms +ssh-rsa
@@ -395,6 +396,7 @@ fi
 /sbin/service sshd condrestart > /dev/null 2>&1 || :
 
 %preun server
+%attr(0755,root,root) %{_bindir}/ssh-copy-id
 if [ "$1" = 0 ]
 then
 	/sbin/service sshd stop > /dev/null 2>&1 || :
